@@ -60,9 +60,9 @@ function getStateFromFile(fileName) {
         return null;
     }
 
-    let rows = fileContent.split('\r\n');
+    let rows = fileContent.trim().split('\r\n');
 
-    let [m, n] = rows[0].split(' ').map(x => Number(x));
+    let [m, n] = rows[0].trim().split(' ').map(x => Number(x));
     if (!m || !n) return null;
 
     let matrix = rows.slice(1);
@@ -70,7 +70,7 @@ function getStateFromFile(fileName) {
 
     let state = [];
     for (let row of matrix) {
-        let array = row.split(' ').map(x => Number(x));
+        let array = row.trim().split(' ').map(x => Number(x));
         if (array.filter(x => isNaN(x)).length || array.length !== n) {
             return null;
         }
@@ -82,12 +82,12 @@ function getStateFromFile(fileName) {
 
 
 function genStartState(m, n) {
-    let state = new Array(m);
-    state.fill([]);
-    for (let i in state) {
+    let state = [];
+    for (let i = 0; i < m; ++i) {
+        state[i] = [];
         for (let j = 0; j < n; ++j) {
-            state[i][j] = Math.round(Math.random());
-        }   
+            state[i].push(Math.round(Math.random()));
+        }
     }
     return state;
 }
@@ -96,16 +96,15 @@ function genStartState(m, n) {
 function getNewState(currState) {
     let res = [];
     for (let i in currState) {
-        let row = [];
+        res[i] = [];
         for (let j in currState[i]) {
             let aliveNeighbours = countAliveNeighbours(Number(i), Number(j));
             if (currState[i][j] === 0) {
-                row.push(aliveNeighbours === 3 ? 1 : 0);
+                res[i].push(aliveNeighbours === 3 ? 1 : 0);
                 continue;
             }
-            row.push(aliveNeighbours === 2 || aliveNeighbours === 3 ? 1 : 0);
+            res[i].push(aliveNeighbours === 2 || aliveNeighbours === 3 ? 1 : 0);
         }
-        res.push(row);
     }
     return res;
 
@@ -143,6 +142,5 @@ function areAllZeros(state) {
     }
     return true;
 }
-
 
 main();
